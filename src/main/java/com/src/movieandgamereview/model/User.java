@@ -1,5 +1,6 @@
 package com.src.movieandgamereview.model;
 
+import com.src.movieandgamereview.dto.UserGroupDTO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -20,17 +21,17 @@ public class User {
     private String password;
     private LocalDate birthDate;
     private LocalDate registrationDate;
-    private AggregateReference<UserGroup, Long> userGroup;
+    private AggregateReference<UserGroup, Long> _userGroup;
     private Set<Review> reviews;
 
-    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, AggregateReference<UserGroup, Long> userGroup) {
+    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, AggregateReference<UserGroup, Long> _userGroup) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.birthDate = birthDate;
         this.registrationDate = registrationDate;
-        this.userGroup = userGroup;
+        this._userGroup = _userGroup;
         this.reviews = new HashSet<>();
     }
 }
