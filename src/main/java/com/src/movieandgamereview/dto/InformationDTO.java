@@ -13,20 +13,20 @@ public class InformationDTO {
     private LocalDate releaseDate;
     private int budget;
     private RateDTO rate;
-    private LanguageDTO language;
+    private LanguageDTO _language;
     private ReviewDTO review;
     private DirectorDTO director;
-    private Set<ActorDTO> actorDTOS;
+    private Set<ActorDTO> actors;
 
-    public InformationDTO(String title, String description, LocalDate releaseDate, int budget, RateDTO rate, LanguageDTO language, ReviewDTO review, DirectorDTO director) {
+    public InformationDTO(String title, String description, LocalDate releaseDate, int budget, RateDTO rate, LanguageDTO _language, ReviewDTO review, DirectorDTO director) {
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
         this.budget = budget;
         this.rate = rate;
-        this.language = language;
+        this._language = _language;
         this.review = review;
         this.director = director;
-        this.actorDTOS = new HashSet<>();
+        this.actors = new HashSet<>();
     }
 }

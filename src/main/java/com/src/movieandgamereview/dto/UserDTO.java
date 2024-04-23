@@ -14,17 +14,17 @@ public class UserDTO {
     private String password;
     private LocalDate birthDate;
     private LocalDate registrationDate;
-    private UserGroupDTO userGroup;
+    private UserGroupDTO _userGroup;
     private Set<ReviewDTO> reviews;
 
-    public UserDTO(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, UserGroupDTO userGroup) {
+    public UserDTO(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, UserGroupDTO _userGroup) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.birthDate = birthDate;
         this.registrationDate = registrationDate;
-        this.userGroup = userGroup;
+        this._userGroup = _userGroup;
         this.reviews = new HashSet<>();
     }
 }
