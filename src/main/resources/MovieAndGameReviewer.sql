@@ -80,7 +80,6 @@ CREATE TABLE information (
 	budget INT,
 	rate bigint,
 	_language bigint,
-	review bigint,
 	director bigint,
 	CONSTRAINT information_pk PRIMARY KEY(id)
 );
@@ -131,10 +130,6 @@ ALTER TABLE information ADD CONSTRAINT rate
 ALTER TABLE information ADD CONSTRAINT _language
 	FOREIGN KEY (_language)
 	REFERENCES _language (id);
-	
-ALTER TABLE information ADD CONSTRAINT review
-	FOREIGN KEY (review)
-	REFERENCES review (id);
 	
 ALTER TABLE information ADD CONSTRAINT director
 	FOREIGN KEY (director)
