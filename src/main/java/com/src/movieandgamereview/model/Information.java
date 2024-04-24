@@ -19,19 +19,19 @@ public class Information {
     private LocalDate releaseDate;
     private int budget;
     private AggregateReference<Rate, Long> rate;
-    private AggregateReference<Language, Long> language;
-    private AggregateReference<Review, Long> review;
+    private AggregateReference<Language, Long> _language;
+    private Set<Review> reviews;
     private AggregateReference<Director, Long> director;
     private Set<Actor> actors;
 
-    public Information(String title, String description, LocalDate releaseDate, int budget, AggregateReference<Rate, Long> rate, AggregateReference<Language, Long> language, AggregateReference<Review, Long> review, AggregateReference<Director, Long> director) {
+    public Information(String title, String description, LocalDate releaseDate, int budget, AggregateReference<Rate, Long> rate, AggregateReference<Language, Long> _language, AggregateReference<Director, Long> director) {
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
         this.budget = budget;
         this.rate = rate;
-        this.language = language;
-        this.review = review;
+        this._language = _language;
+        this.reviews = new HashSet<>();
         this.director = director;
         this.actors = new HashSet<>();
     }
