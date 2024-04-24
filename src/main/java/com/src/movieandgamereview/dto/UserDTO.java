@@ -1,30 +1,30 @@
 package com.src.movieandgamereview.dto;
 
+import com.src.movieandgamereview.model.Review;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
 public class UserDTO {
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     private LocalDate birthDate;
     private LocalDate registrationDate;
-    private UserGroupDTO userGroup;
-    private Set<ReviewDTO> reviews;
+    private UserGroupDTO userGroupDTO;
+    //TODO: USE REVIEWDTO INSTEAD.
+    private Set<Review> reviews;
 
-    public UserDTO(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, UserGroupDTO userGroup) {
+    public UserDTO(Long id, String firstName, String lastName, String email, LocalDate birthDate, LocalDate registrationDate, Set<Review> reviews) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
         this.birthDate = birthDate;
         this.registrationDate = registrationDate;
-        this.userGroup = userGroup;
-        this.reviews = new HashSet<>();
+        this.reviews = reviews;
     }
 }

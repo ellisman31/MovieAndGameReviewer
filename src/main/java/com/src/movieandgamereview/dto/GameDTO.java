@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class GameDTO {
-    private InformationDTO  information;
+    private InformationDTO information;
     private GameGenreDTO gameGenre;
 
     public GameDTO(InformationDTO information, GameGenreDTO gameGenre) {

@@ -12,6 +12,7 @@ import java.util.Set;
 public class MovieGenre {
     @Id
     private Long id;
+    //TODO: CRATE ENUM FOR MOVIE GENRES.
     private String name;
     private Set<Movie> movies;
 
