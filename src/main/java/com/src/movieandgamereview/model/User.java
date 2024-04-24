@@ -1,6 +1,5 @@
 package com.src.movieandgamereview.model;
 
-import com.src.movieandgamereview.dto.UserGroupDTO;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;

@@ -12,6 +12,7 @@ import java.util.Set;
 public class GameGenre {
     @Id
     private Long id;
+    //TODO: CRATE ENUM FOR GAME GENRES.
     private String name;
     private Set<Game> games;
 

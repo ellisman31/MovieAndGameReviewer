@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Language {
     @Id
     private Long id;
+    //TODO: CRATE ENUM FOR LANGUAGES.
     private String name;
 
     public Language(String name) {
