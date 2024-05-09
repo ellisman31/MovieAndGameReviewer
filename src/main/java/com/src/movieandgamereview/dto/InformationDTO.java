@@ -18,15 +18,15 @@ public class InformationDTO {
     private DirectorDTO director;
     private Set<ActorDTO> actors;
 
-    public InformationDTO(String title, String description, LocalDate releaseDate, int budget, RateDTO rate, LanguageDTO _language, DirectorDTO director) {
+    public InformationDTO(String title, String description, LocalDate releaseDate, int budget, RateDTO rate, LanguageDTO _language, Set<ReviewDTO> reviews, DirectorDTO director, Set<ActorDTO> actors) {
         this.title = title;
         this.description = description;
         this.releaseDate = releaseDate;
         this.budget = budget;
         this.rate = rate;
         this._language = _language;
-        this.reviews = new HashSet<>();
+        this.reviews = reviews;
         this.director = director;
-        this.actors = new HashSet<>();
+        this.actors = actors;
     }
 }

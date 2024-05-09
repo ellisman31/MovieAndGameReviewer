@@ -2,7 +2,6 @@ package com.src.movieandgamereview.dto;
 
 import lombok.Data;
 
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -10,8 +9,8 @@ public class MovieGenreDTO {
     private String name;
     private Set<MovieDTO> movies;
 
-    public MovieGenreDTO(String name) {
+    public MovieGenreDTO(String name, Set<MovieDTO> movies) {
         this.name = name;
-        this.movies = new HashSet<>();
+        this.movies = movies;
     }
 }

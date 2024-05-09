@@ -15,10 +15,9 @@ public class UserDTO {
     private LocalDate birthDate;
     private LocalDate registrationDate;
     private UserGroupDTO userGroupDTO;
-    //TODO: USE REVIEWDTO INSTEAD.
-    private Set<Review> reviews;
+    private Set<ReviewDTO> reviews;
 
-    public UserDTO(Long id, String firstName, String lastName, String email, LocalDate birthDate, LocalDate registrationDate, Set<Review> reviews) {
+    public UserDTO(Long id, String firstName, String lastName, String email, LocalDate birthDate, LocalDate registrationDate, Set<ReviewDTO> reviews) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

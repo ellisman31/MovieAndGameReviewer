@@ -13,7 +13,6 @@ public class Rate {
     @Id
     private Long id;
     //TODO: CRATE ENUM FOR RATES.
-
     private String name;
     private Set<Movie> movies;
     private Set<Game> games;
