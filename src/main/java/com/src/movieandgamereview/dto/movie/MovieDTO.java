@@ -1,7 +1,7 @@
-package com.src.movieandgamereview.dto;
+package com.src.movieandgamereview.dto.movie;
 
+import com.src.movieandgamereview.dto.information.InformationDTO;
 import lombok.Data;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 @Data
 public class MovieDTO {

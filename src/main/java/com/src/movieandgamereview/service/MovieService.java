@@ -1,13 +1,15 @@
 package com.src.movieandgamereview.service;
 
-import com.src.movieandgamereview.dto.InformationDTO;
-import com.src.movieandgamereview.dto.MovieDTO;
-import com.src.movieandgamereview.dto.MovieGenreDTO;
+import com.src.movieandgamereview.dto.information.InformationDTO;
+import com.src.movieandgamereview.dto.movie.MovieDTO;
+import com.src.movieandgamereview.dto.movie.MovieGenreDTO;
 import com.src.movieandgamereview.model.Information;
-import com.src.movieandgamereview.model.Movie;
-import com.src.movieandgamereview.model.MovieGenre;
+import com.src.movieandgamereview.model.movie.Movie;
+import com.src.movieandgamereview.model.movie.MovieGenre;
+import com.src.movieandgamereview.model.Review;
 import com.src.movieandgamereview.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,14 +25,21 @@ public class MovieService {
     private MovieGenreService movieGenreService;
     @Autowired
     private InformationService informationService;
+    @Autowired
+    private ReviewService reviewService;
 
     public List<MovieDTO> getAllMovie() {
         return ((List<Movie>) movieRepository.findAll()).stream().map(this::convertToMovieDTO).collect(Collectors.toList());
     }
 
-    public Movie findMovieById(Long movieId) {
-        Optional<Movie> getMovie = movieRepository.findById(movieId);
+    public Movie findMovieById(Long currentMovieId) {
+        Optional<Movie> getMovie = movieRepository.findById(currentMovieId);
         return getMovie.orElse(null);
+    }
+
+    public MovieDTO findAndGetMovieDTOById(Long currentMovieId) {
+        Optional<Movie> getMovie = movieRepository.findById(currentMovieId);
+        return getMovie.map(this::convertToMovieDTO).orElse(null);
     }
 
     public void saveMovie(Movie movie) {
@@ -38,8 +47,8 @@ public class MovieService {
         movieRepository.save(movie);
     }
 
-    public void updateMovie(Long movieId, Movie newMovieData) {
-        Movie currentMovie = findMovieById(movieId);
+    public void updateMovie(Long currentMovieId, Movie newMovieData) {
+        Movie currentMovie = findMovieById(currentMovieId);
         if (newMovieData.getMovieLength() > 0) {
             currentMovie.setMovieLength(newMovieData.getMovieLength());
         }
@@ -55,9 +64,16 @@ public class MovieService {
         saveMovie(currentMovie);
     }
 
-    public MovieDTO findAndGetMovieDTOById(Long movieId) {
-        Optional<Movie> getMovie = movieRepository.findById(movieId);
-        return getMovie.map(this::convertToMovieDTO).orElse(null);
+    public void deleteMovie(Long currentMovieId) {
+        Movie getMovie = findMovieById(currentMovieId);
+        MovieGenre moviegenre = movieGenreService.findMovieGenreById(getMovie.getMovieGenre().getId());
+        moviegenre.getMovies().remove(getMovie);
+        movieGenreService.updateMovieGenre(moviegenre.getId(), moviegenre);
+        List<Review> reviews = reviewService.findReviewByMovie(AggregateReference.to(currentMovieId));
+        reviews.forEach(review -> {
+            reviewService.deleteReview(review.getId());
+        });
+        movieRepository.delete(getMovie);
     }
 
     protected MovieDTO convertToMovieDTO(Movie movie) {
@@ -77,4 +93,7 @@ public class MovieService {
         }
     }
 
+    public Movie findMovieByInformation(AggregateReference<Information, Long> information) {
+        return movieRepository.findByInformation(information).orElse(null);
+    }
 }
