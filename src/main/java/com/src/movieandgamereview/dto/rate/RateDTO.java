@@ -1,4 +1,4 @@
-package com.src.movieandgamereview.dto;
+package com.src.movieandgamereview.dto.rate;
 
 import lombok.Data;
 

@@ -1,5 +1,7 @@
 package com.src.movieandgamereview.model;
 
+import com.src.movieandgamereview.model.game.Game;
+import com.src.movieandgamereview.model.movie.Movie;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
