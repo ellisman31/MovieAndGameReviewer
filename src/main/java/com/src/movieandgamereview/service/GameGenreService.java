@@ -1,9 +1,10 @@
 package com.src.movieandgamereview.service;
 
-import com.src.movieandgamereview.dto.GameDTO;
-import com.src.movieandgamereview.dto.GameGenreDTO;
-import com.src.movieandgamereview.model.Game;
-import com.src.movieandgamereview.model.GameGenre;
+import com.src.movieandgamereview.dto.game.GameDTO;
+import com.src.movieandgamereview.dto.game.GameGenreDTO;
+import com.src.movieandgamereview.dto.game.GameGenreGamesDTO;
+import com.src.movieandgamereview.model.game.Game;
+import com.src.movieandgamereview.model.game.GameGenre;
 import com.src.movieandgamereview.repository.GameGenreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,14 +26,19 @@ public class GameGenreService {
         return ((List<GameGenre>) gameGenreRepository.findAll()).stream().map(this::convertToGameGenreDTO).collect(Collectors.toList());
     }
 
-    public GameGenre findGameGenreById(Long gameGenreId) {
-        Optional<GameGenre> getGameGenre = gameGenreRepository.findById(gameGenreId);
+    public GameGenre findGameGenreById(Long currentGameGenreId) {
+        Optional<GameGenre> getGameGenre = gameGenreRepository.findById(currentGameGenreId);
         return getGameGenre.orElse(null);
     }
 
-    public GameGenreDTO findAndGetGameGenreDTOById(Long gameGenreId) {
-        Optional<GameGenre> getGameGenre = gameGenreRepository.findById(gameGenreId);
+    public GameGenreDTO findAndGetGameGenreDTOById(Long currentGameGenreId) {
+        Optional<GameGenre> getGameGenre = gameGenreRepository.findById(currentGameGenreId);
         return getGameGenre.map(this::convertToGameGenreDTO).orElse(null);
+    }
+
+    public GameGenreGamesDTO findAndGetGameGenreGamesDTOById(Long currentGameGenreId) {
+        Optional<GameGenre> getGameGenre = gameGenreRepository.findById(currentGameGenreId);
+        return getGameGenre.map(this::convertGameGenreGamesToDTO).orElse(null);
     }
 
     public void saveGameGenre(GameGenre gameGenre) {
@@ -59,13 +65,26 @@ public class GameGenreService {
         saveGameGenre(currentGameGenre);
     }
 
+    public void deleteGameGenre(Long currentGameGenreId) {
+        GameGenre getGameGenre = findGameGenreById(currentGameGenreId);
+        getGameGenre.getGames().forEach(game -> {
+            game.setGameGenre(null);
+            gameService.updateGame(game.getId(), game);
+        });
+        gameGenreRepository.delete(getGameGenre);
+    }
+
     protected GameGenreDTO convertToGameGenreDTO(GameGenre gameGenre) {
+        return new GameGenreDTO(gameGenre.getName());
+    }
+
+    protected GameGenreGamesDTO convertGameGenreGamesToDTO(GameGenre gameGenre) {
         Set<GameDTO> games = gameGenre.getGames()
                 .stream()
                 .map(gameService::convertToGameDTO)
                 .collect(Collectors.toSet());
 
-        return new GameGenreDTO(gameGenre.getName(), games);
+        return new GameGenreGamesDTO(games);
     }
 
 }
