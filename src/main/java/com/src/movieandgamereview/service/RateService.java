@@ -5,6 +5,7 @@ import com.src.movieandgamereview.dto.movie.MovieDTO;
 import com.src.movieandgamereview.dto.rate.RateDTO;
 import com.src.movieandgamereview.dto.rate.RateGamesDTO;
 import com.src.movieandgamereview.dto.rate.RateMoviesDTO;
+import com.src.movieandgamereview.group.Rates;
 import com.src.movieandgamereview.model.game.Game;
 import com.src.movieandgamereview.model.Information;
 import com.src.movieandgamereview.model.movie.Movie;
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RateService {
-
     @Autowired
     private RateRepository rateRepository;
     @Autowired

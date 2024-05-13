@@ -1,5 +1,6 @@
 package com.src.movieandgamereview.model;
 
+import com.src.movieandgamereview.group.Rates;
 import com.src.movieandgamereview.model.game.Game;
 import com.src.movieandgamereview.model.movie.Movie;
 import lombok.Data;
@@ -14,12 +15,11 @@ import java.util.Set;
 public class Rate {
     @Id
     private Long id;
-    //TODO: CRATE ENUM FOR RATES.
-    private String name;
+    private Rates name;
     private Set<Movie> movies;
     private Set<Game> games;
 
-    public Rate(String name) {
+    public Rate(Rates name) {
         this.name = name;
         this.movies = new HashSet<>();
         this.games = new HashSet<>();
