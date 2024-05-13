@@ -14,7 +14,7 @@ import java.util.List;
 public interface InformationRepository extends CrudRepository<Information, Long> {
 
     List<Information> findByRate(AggregateReference<Rate, Long> rate);
-    List<Information> findBy_Language(AggregateReference<Language, Long> language);
+    List<Information> findBy_language(AggregateReference<Language, Long> language);
     List<Information> findByDirector(AggregateReference<Director, Long> director);
 
 }

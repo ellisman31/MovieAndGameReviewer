@@ -138,7 +138,7 @@ public class InformationService {
     }
 
     public List<Information> findInformationByLanguage(AggregateReference<Language, Long> language) {
-        return informationRepository.findBy_Language(language);
+        return informationRepository.findBy_language(language);
     }
 
     public List<Information> findInformationByDirector(AggregateReference<Director, Long> director) {
