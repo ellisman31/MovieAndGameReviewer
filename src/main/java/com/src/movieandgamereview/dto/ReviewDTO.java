@@ -1,5 +1,8 @@
 package com.src.movieandgamereview.dto;
 
+import com.src.movieandgamereview.dto.game.GameDTO;
+import com.src.movieandgamereview.dto.movie.MovieDTO;
+import com.src.movieandgamereview.dto.user.UserDTO;
 import lombok.Data;
 
 @Data
