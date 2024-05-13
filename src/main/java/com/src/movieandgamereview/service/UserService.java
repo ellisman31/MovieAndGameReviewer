@@ -1,11 +1,13 @@
 package com.src.movieandgamereview.service;
 
 import com.src.movieandgamereview.dto.ReviewDTO;
-import com.src.movieandgamereview.dto.UserDTO;
-import com.src.movieandgamereview.dto.UserGroupDTO;
+import com.src.movieandgamereview.dto.user.UserDTO;
+import com.src.movieandgamereview.dto.user.UserGroupDTO;
+import com.src.movieandgamereview.dto.user.UserReviewsDTO;
+import com.src.movieandgamereview.group.UserGroups;
 import com.src.movieandgamereview.model.Review;
-import com.src.movieandgamereview.model.User;
-import com.src.movieandgamereview.model.UserGroup;
+import com.src.movieandgamereview.model.user.User;
+import com.src.movieandgamereview.model.user.UserGroup;
 import com.src.movieandgamereview.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -16,9 +18,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+//TODO: CREATE CONTROLLERS FOR ALL SERVICES.
+//TODO: CREATE ENUM FOR MODELS TO SIMPLIFY GROUPS.
 @Service
 public class UserService {
-    //TODO: REMOVE METHOD FROM DATABASE FOR ALL SERVICES.
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -30,21 +33,24 @@ public class UserService {
         return ((List<User>) userRepository.findAll()).stream().map(this::convertToUserDTO).collect(Collectors.toList());
     }
 
-    public User findUserById(Long userId) {
-        Optional<User> getUser = userRepository.findById(userId);
+    public User findUserById(Long currentUserId) {
+        Optional<User> getUser = userRepository.findById(currentUserId);
         return getUser.orElse(null);
     }
 
-    public UserDTO findAndGetUserByIdDTO(Long userId) {
-        Optional<User> getUser = userRepository.findById(userId);
+    public UserDTO findAndGetUserByIdDTO(Long currentUserId) {
+        Optional<User> getUser = userRepository.findById(currentUserId);
         return getUser.map(this::convertToUserDTO).orElse(null);
     }
 
+    public UserReviewsDTO findAndGetUserReviewsByIdDTO(Long userId) {
+        Optional<User> getUser = userRepository.findById(userId);
+        return getUser.map(this::convertUserReviewsToDTO).orElse(null);
+    }
+
     public void saveUser(User user) {
-        if (user.get_userGroup() != null) {
-            UserGroup defaultUserGroup = userGroupService.findUserGroupById(1l);
-            AggregateReference<UserGroup, Long> userGroup = (AggregateReference<UserGroup, Long>) defaultUserGroup;
-            user.set_userGroup(userGroup);
+        if (user.get_userGroup() == null) {
+            user = setToDefaultUserGroup(user);
         }
         userRepository.save(user);
     }
@@ -98,19 +104,36 @@ public class UserService {
         saveUser(currentUser);
     }
 
-    protected UserDTO convertToUserDTO(User user) {
-        Set<ReviewDTO> reviews = user.getReviews()
-                .stream()
-                .map(reviewService::convertToReviewDTO)
-                .collect(Collectors.toSet());
+    public void deleteUser(Long currentUserId) {
+        User currentUser = findUserById(currentUserId);
+        currentUser.getReviews().forEach(review -> reviewService.deleteReview(review.getId()));
+        userGroupService.removeUserFromUserGroup(currentUser);
+        userRepository.delete(currentUser);
+    }
 
+    protected UserDTO convertToUserDTO(User user) {
         UserDTO userDTO = new UserDTO(user.getId(), user.getFirstName(),
                 user.getLastName(), user.getEmail(),
-                user.getBirthDate(), user.getRegistrationDate(), reviews);
+                user.getBirthDate(), user.getRegistrationDate());
 
         UserGroupDTO getUserGroupDTO = userGroupService.addUserToUserGroup(user);
         userDTO.setUserGroupDTO(getUserGroupDTO);
 
         return userDTO;
+    }
+
+    protected UserReviewsDTO convertUserReviewsToDTO(User user) {
+        Set<ReviewDTO> reviews = user.getReviews()
+                .stream()
+                .map(review -> reviewService.convertToReviewDTO(review))
+                .collect(Collectors.toSet());
+        return new UserReviewsDTO(reviews);
+    }
+
+    protected User setToDefaultUserGroup(User user) {
+        UserGroup defaultUserGroup = userGroupService.findUserGroupByName(UserGroups.MEMBER);
+        AggregateReference<UserGroup, Long> userGroup = AggregateReference.to((defaultUserGroup).getId());
+        user.set_userGroup(userGroup);
+        return user;
     }
 }

@@ -1,5 +1,6 @@
-package com.src.movieandgamereview.model;
+package com.src.movieandgamereview.model.user;
 
+import com.src.movieandgamereview.model.Review;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -23,13 +24,13 @@ public class User {
     private AggregateReference<UserGroup, Long> _userGroup;
     private Set<Review> reviews;
 
-    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, LocalDate registrationDate, AggregateReference<UserGroup, Long> _userGroup) {
+    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, AggregateReference<UserGroup, Long> _userGroup) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.birthDate = birthDate;
-        this.registrationDate = registrationDate;
+        this.registrationDate = LocalDate.now();
         this._userGroup = _userGroup;
         this.reviews = new HashSet<>();
     }
