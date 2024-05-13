@@ -33,8 +33,9 @@ public class UserGroupService {
         return getUserGroup.map(this::convertToUserGroupDTO).orElse(null);
     }
 
-    public UserGroup findUserGroupByName(UserGroups userGroup) {
-        Optional<UserGroup> getUserGroup = userGroupRepository.findByName(userGroup);
+    public UserGroup findUserGroupByName(String userGroupName) {
+        UserGroups getUserGroupName = UserGroups.valueOf(userGroupName.toUpperCase());
+        Optional<UserGroup> getUserGroup = userGroupRepository.findByName(getUserGroupName);
         return getUserGroup.orElse(null);
     }
 

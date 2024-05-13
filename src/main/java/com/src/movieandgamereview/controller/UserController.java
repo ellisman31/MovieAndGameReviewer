@@ -1,12 +1,11 @@
 package com.src.movieandgamereview.controller;
 
-import com.src.movieandgamereview.dto.UserDTO;
+import com.src.movieandgamereview.dto.user.UserDTO;
+import com.src.movieandgamereview.model.user.User;
 import com.src.movieandgamereview.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,13 +17,33 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/getAllUser")
+    @ResponseBody
     public List<UserDTO> getAllUser() {
         return userService.getAllUser();
     }
 
     @GetMapping("/findUserById/{id}")
-    public UserDTO getUserById(@PathVariable Long userId) {
-        return userService.findUserById(userId);
+    @ResponseBody
+    public UserDTO getUserById(@PathVariable("id") Long userId) {
+        return userService.findAndGetUserByIdDTO(userId);
+    }
+
+    @PostMapping("/addUser")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addUser(@RequestBody User newUser) {
+        userService.saveUser(newUser);
+    }
+
+    @PutMapping("/updateUser/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateUser(@PathVariable("id") Long userId, @RequestBody User newUserData) {
+        userService.updateUser(userId, newUserData);
+    }
+
+    @DeleteMapping("/deleteUser/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser(@PathVariable("id") Long userId) {
+        userService.deleteUser(userId);
     }
 
 }

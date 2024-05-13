@@ -131,7 +131,7 @@ public class UserService {
     }
 
     protected User setToDefaultUserGroup(User user) {
-        UserGroup defaultUserGroup = userGroupService.findUserGroupByName(UserGroups.MEMBER);
+        UserGroup defaultUserGroup = userGroupService.findUserGroupByName(UserGroups.MEMBER.name());
         AggregateReference<UserGroup, Long> userGroup = AggregateReference.to((defaultUserGroup).getId());
         user.set_userGroup(userGroup);
         return user;
