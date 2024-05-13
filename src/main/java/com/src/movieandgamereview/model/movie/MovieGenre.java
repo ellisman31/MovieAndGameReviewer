@@ -1,5 +1,6 @@
 package com.src.movieandgamereview.model.movie;
 
+import com.src.movieandgamereview.group.MovieGenres;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
@@ -12,11 +13,10 @@ import java.util.Set;
 public class MovieGenre {
     @Id
     private Long id;
-    //TODO: CRATE ENUM FOR MOVIE GENRES.
-    private String name;
+    private MovieGenres name;
     private Set<Movie> movies;
 
-    public MovieGenre(String name) {
+    public MovieGenre(MovieGenres name) {
         this.name = name;
         this.movies = new HashSet<>();
     }
