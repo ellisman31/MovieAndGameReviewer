@@ -1,4 +1,4 @@
-package com.src.movieandgamereview.model;
+package com.src.movieandgamereview.model.movie;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
