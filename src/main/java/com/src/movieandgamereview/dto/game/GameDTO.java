@@ -1,5 +1,6 @@
-package com.src.movieandgamereview.dto;
+package com.src.movieandgamereview.dto.game;
 
+import com.src.movieandgamereview.dto.information.InformationDTO;
 import lombok.Data;
 
 @Data
