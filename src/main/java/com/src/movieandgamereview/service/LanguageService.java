@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class LanguageService {
-
     @Autowired
     private LanguageRepository languageRepository;
     @Autowired

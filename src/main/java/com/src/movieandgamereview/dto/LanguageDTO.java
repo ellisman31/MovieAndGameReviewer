@@ -1,13 +1,13 @@
 package com.src.movieandgamereview.dto;
 
+import com.src.movieandgamereview.group.Languages;
 import lombok.Data;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
 
 @Data
 public class LanguageDTO {
-    private String name;
+    private Languages name;
 
-    public LanguageDTO(String name) {
+    public LanguageDTO(Languages name) {
         this.name = name;
     }
 }
