@@ -1,4 +1,4 @@
-package com.src.movieandgamereview.model;
+package com.src.movieandgamereview.model.user;
 
 import com.src.movieandgamereview.group.UserGroups;
 import lombok.Data;
