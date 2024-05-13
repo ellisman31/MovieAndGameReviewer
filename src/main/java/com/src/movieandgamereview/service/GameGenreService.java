@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class GameGenreService {
-
     @Autowired
     private GameGenreRepository gameGenreRepository;
     @Autowired
