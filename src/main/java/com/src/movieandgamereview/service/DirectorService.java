@@ -61,36 +61,60 @@ public class DirectorService {
         directorRepository.save(director);
     }
 
+    public void saveNewDirector(Long personId, Director newDirector) {
+        Person getPerson = personService.findPersonById(personId);
+        newDirector.setPerson(AggregateReference.to(getPerson.getId()));
+        saveDirector(newDirector);
+    }
+
     public void updateDirector(Long currentDirectorId, Director newDirectorData) {
         Director currentDirector = findDirectorById(currentDirectorId);
         if (newDirectorData.getPerson() != null) {
             currentDirector.setPerson(newDirectorData.getPerson());
         }
+        if (newDirectorData.getMovies() != null) {
+            currentDirector.setMovies(newDirectorData.getMovies());
+        }
+        if (newDirectorData.getGames() != null) {
+            currentDirector.setGames(newDirectorData.getGames());
+        }
         saveDirector(currentDirector);
     }
 
-    public void addDirectorToGame(Long currentDirectorId, Game game) {
+    public void addDirectorToGame(Long currentDirectorId, Long currentGameId) {
         Director currentDirector = findDirectorById(currentDirectorId);
-        currentDirector.getGames().add(game);
-        saveDirector(currentDirector);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && !currentDirector.getGames().contains(getGame)) {
+            currentDirector.getGames().add(getGame);
+            updateDirector(currentDirectorId, currentDirector);
+        }
     }
 
-    public void removeDirectorFromGame(Long currentDirectorId, Game game) {
+    public void removeDirectorFromGame(Long currentDirectorId, Long currentGameId) {
         Director currentDirector = findDirectorById(currentDirectorId);
-        currentDirector.getGames().remove(game);
-        saveDirector(currentDirector);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && currentDirector.getGames().contains(getGame)) {
+            currentDirector.getGames().remove(getGame);
+            updateDirector(currentDirectorId, currentDirector);
+        }
     }
 
-    public void addDirectorToMovie(Long currentDirectorId, Movie movie) {
+    public void addDirectorToMovie(Long currentDirectorId, Long currentMovieId) {
         Director currentDirector = findDirectorById(currentDirectorId);
-        currentDirector.getMovies().add(movie);
-        saveDirector(currentDirector);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && !currentDirector.getMovies().contains(getMovie)) {
+            currentDirector.getMovies().add(getMovie);
+            updateDirector(currentDirectorId, currentDirector);
+        }
     }
 
-    public void removeDirectorFromMovie(Long currentDirectorId, Movie movie) {
+    public void removeDirectorFromMovie(Long currentDirectorId, Long currentMovieId) {
         Director currentDirector = findDirectorById(currentDirectorId);
-        currentDirector.getMovies().remove(movie);
-        saveDirector(currentDirector);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && currentDirector.getMovies().contains(getMovie)) {
+            currentDirector.getMovies().remove(getMovie);
+            updateDirector(currentDirectorId, currentDirector);
+        }
     }
 
     public void deleteDirector(Long currentDirectorId) {
