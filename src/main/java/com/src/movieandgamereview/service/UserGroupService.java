@@ -55,25 +55,35 @@ public class UserGroupService {
         return currentUserGroup;
     }
 
-    public UserGroupDTO addUserToUserGroup(User user) {
-        UserGroup findUserGroup = findUserGroupById(user.get_userGroup().getId());
-        findUserGroup.getUsers().add(user);
-        UserGroup currentUserGroup = updateUserGroup(user.get_userGroup().getId(), findUserGroup);
-
+    public UserGroupDTO addUserToUserGroup(Long currentUserGroupId, Long currentUserId) {
+        UserGroup currentUserGroup = findUserGroupById(currentUserGroupId);
+        User getUser = userService.findUserById(currentUserId);
+        if (getUser != null && !currentUserGroup.getUsers().contains(getUser)) {
+            currentUserGroup.getUsers().add(getUser);
+            UserGroup updatedUserGroup = updateUserGroup(currentUserGroupId, currentUserGroup);
+            return convertToUserGroupDTO(updatedUserGroup);
+        }
         return convertToUserGroupDTO(currentUserGroup);
     }
 
-    public void removeUserFromUserGroup(User user) {
-        UserGroup currentUserGroup = findUserGroupById(user.get_userGroup().getId());
-        currentUserGroup.getUsers().remove(user);
-        userGroupRepository.save(currentUserGroup);
+    public void removeUserFromUserGroup(Long currentUserGroupId, Long currentUserId) {
+        UserGroup currentUserGroup = findUserGroupById(currentUserGroupId);
+        User getUser = userService.findUserById(currentUserId);
+        if (getUser != null && !currentUserGroup.getUsers().contains(getUser)) {
+            currentUserGroup.getUsers().remove(getUser);
+            updateUserGroup(currentUserGroupId, currentUserGroup);
+        }
     }
 
     public void deleteUserGroup(Long currentUserGroupId) {
         UserGroup currentUserGroup = findUserGroupById(currentUserGroupId);
         currentUserGroup.getUsers().forEach(user -> {
             user.set_userGroup(userService.setToDefaultUserGroup(user).get_userGroup());
-            userService.saveUser(user);
+            try {
+                userService.updateUser(user.getId(), user);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
         userGroupRepository.delete(currentUserGroup);
     }
