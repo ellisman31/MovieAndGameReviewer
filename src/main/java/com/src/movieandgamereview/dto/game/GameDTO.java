@@ -6,10 +6,8 @@ import lombok.Data;
 @Data
 public class GameDTO {
     private InformationDTO information;
-    private GameGenreDTO gameGenre;
 
-    public GameDTO(InformationDTO information, GameGenreDTO gameGenre) {
+    public GameDTO(InformationDTO information) {
         this.information = information;
-        this.gameGenre = gameGenre;
     }
 }

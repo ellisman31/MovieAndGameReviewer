@@ -6,16 +6,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Table("game")
 public class Game {
     @Id
     private Long id;
     private AggregateReference<Information, Long> information;
-    private AggregateReference<GameGenre, Long> gameGenre;
+    private Set<GameGenre> gameGenres;
 
-    public Game(AggregateReference<Information, Long> information, AggregateReference<GameGenre, Long> gameGenre) {
+    public Game(AggregateReference<Information, Long> information) {
         this.information = information;
-        this.gameGenre = gameGenre;
+        this.gameGenres = new HashSet<>();
     }
 }
