@@ -1,8 +1,8 @@
 package com.src.movieandgamereview.model;
 
+import com.src.movieandgamereview.group.Languages;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -10,10 +10,9 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Language {
     @Id
     private Long id;
-    //TODO: CRATE ENUM FOR LANGUAGES.
-    private String name;
+    private Languages name;
 
-    public Language(String name) {
+    public Language(Languages name) {
         this.name = name;
     }
 }

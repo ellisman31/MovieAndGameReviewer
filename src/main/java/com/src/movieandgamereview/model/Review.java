@@ -1,5 +1,8 @@
 package com.src.movieandgamereview.model;
 
+import com.src.movieandgamereview.model.game.Game;
+import com.src.movieandgamereview.model.movie.Movie;
+import com.src.movieandgamereview.model.user.User;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;

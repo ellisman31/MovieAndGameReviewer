@@ -1,6 +1,6 @@
 package com.src.movieandgamereview.repository;
 
-import com.src.movieandgamereview.model.User;
+import com.src.movieandgamereview.model.user.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
