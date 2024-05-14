@@ -61,7 +61,8 @@ public class PersonService {
         Director director = directorService.findDirectorByPerson(AggregateReference.to(currentPersonId));
         directorService.deleteDirector(director.getId());
         Actor actor = actorService.findActorByPerson(AggregateReference.to(currentPersonId));
-        actorService.deleteActor(actor.getId());
+        actor.setPerson(null);
+        actorService.updateActor(actor.getId(), actor);
         personRepository.delete(getPerson);
     }
 
