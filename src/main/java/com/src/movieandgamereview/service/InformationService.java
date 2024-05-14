@@ -68,6 +68,16 @@ public class InformationService {
         informationRepository.save(information);
     }
 
+    public void saveNewInformation(Long currentRateId, Long currentLanguageId, Long currentDirectorId, Information newInformation) {
+        Rate getRate = rateService.findRateById(currentRateId);
+        Language getLanguage = languageService.findLanguageById(currentLanguageId);
+        Director getDirector = directorService.findDirectorById(currentDirectorId);
+        newInformation.setRate(AggregateReference.to(getRate.getId()));
+        newInformation.set_language(AggregateReference.to(getLanguage.getId()));
+        newInformation.setDirector(AggregateReference.to(getDirector.getId()));
+        saveInformation(newInformation);
+    }
+
     public void updateInformation(Long currentInformationId, Information newInformationData) {
         Information currentInformation = findInformationById(currentInformationId);
         if (newInformationData.getTitle() != null) {
@@ -100,28 +110,40 @@ public class InformationService {
         saveInformation(currentInformation);
     }
 
-    public void addActorToInformation(Long currentInformationId, Actor actor) {
+    public void addActorToInformation(Long currentInformationId, Long currentActorId) {
         Information currentInformation = findInformationById(currentInformationId);
-        currentInformation.getActors().add(actor);
-        saveInformation(currentInformation);
+        Actor getActor = actorService.findActorById(currentActorId);
+        if (getActor != null && !currentInformation.getActors().contains(getActor)) {
+            currentInformation.getActors().add(getActor);
+            updateInformation(currentInformationId, currentInformation);
+        }
     }
 
-    public void removeActorFromInformation(Long currentInformationId, Actor actor) {
+    public void removeActorFromInformation(Long currentInformationId, Long currentActorId) {
         Information currentInformation = findInformationById(currentInformationId);
-        currentInformation.getActors().remove(actor);
-        saveInformation(currentInformation);
+        Actor getActor = actorService.findActorById(currentActorId);
+        if (getActor != null && currentInformation.getActors().contains(getActor)) {
+            currentInformation.getActors().remove(getActor);
+            updateInformation(currentInformationId, currentInformation);
+        }
     }
 
-    public void addReviewToInformation(Long currentInformationId, Review review) {
+    public void addReviewToInformation(Long currentInformationId, Long currentReviewId) {
         Information currentInformation = findInformationById(currentInformationId);
-        currentInformation.getReviews().add(review);
-        saveInformation(currentInformation);
+        Review getReview = reviewService.findReviewById(currentReviewId);
+        if (getReview != null && !currentInformation.getReviews().contains(getReview)) {
+            currentInformation.getReviews().add(getReview);
+            updateInformation(currentInformationId, currentInformation);
+        }
     }
 
-    public void removeReviewFromInformation(Long currentInformationId, Review review) {
+    public void removeReviewFromInformation(Long currentInformationId, Long currentReviewId) {
         Information currentInformation = findInformationById(currentInformationId);
-        currentInformation.getReviews().remove(review);
-        saveInformation(currentInformation);
+        Review getReview = reviewService.findReviewById(currentReviewId);
+        if (getReview != null && currentInformation.getReviews().contains(getReview)) {
+            currentInformation.getReviews().remove(getReview);
+            updateInformation(currentInformationId, currentInformation);
+        }
     }
 
     public void deleteInformation(Long currentInformationId) {
