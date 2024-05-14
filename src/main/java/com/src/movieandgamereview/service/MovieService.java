@@ -3,6 +3,7 @@ package com.src.movieandgamereview.service;
 import com.src.movieandgamereview.dto.information.InformationDTO;
 import com.src.movieandgamereview.dto.movie.MovieDTO;
 import com.src.movieandgamereview.dto.movie.MovieGenreDTO;
+import com.src.movieandgamereview.dto.movie.MoviesMovieGenresDTO;
 import com.src.movieandgamereview.model.Information;
 import com.src.movieandgamereview.model.movie.Movie;
 import com.src.movieandgamereview.model.movie.MovieGenre;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,8 +44,12 @@ public class MovieService {
         return getMovie.map(this::convertToMovieDTO).orElse(null);
     }
 
+    public MoviesMovieGenresDTO findAndGetMoviesMovieGenresDTOById(Long currentMovieId) {
+        Optional<Movie> getMovie = movieRepository.findById(currentMovieId);
+        return getMovie.map(this::convertToMoviesMovieGenresDTO).orElse(null);
+    }
+
     public void saveMovie(Movie movie) {
-        setMovieGenreForMovie(movie);
         movieRepository.save(movie);
     }
 
@@ -55,42 +61,61 @@ public class MovieService {
         if (newMovieData.getInformation() != null) {
             currentMovie.setInformation(newMovieData.getInformation());
         }
-        if (newMovieData.getMovieGenre() != null) {
-            currentMovie.setMovieGenre(newMovieData.getMovieGenre());
-            if (currentMovie.getMovieGenre() != newMovieData.getMovieGenre()) {
-                movieGenreService.removeMovieFromMovieGenre(currentMovie.getMovieGenre().getId(), currentMovie);
-            }
+        if (newMovieData.getMovieGenres() != null) {
+            currentMovie.setMovieGenres(newMovieData.getMovieGenres());
         }
         saveMovie(currentMovie);
     }
 
     public void deleteMovie(Long currentMovieId) {
         Movie getMovie = findMovieById(currentMovieId);
-        MovieGenre moviegenre = movieGenreService.findMovieGenreById(getMovie.getMovieGenre().getId());
-        moviegenre.getMovies().remove(getMovie);
-        movieGenreService.updateMovieGenre(moviegenre.getId(), moviegenre);
+        getMovie.getMovieGenres().forEach(movieGenre -> {
+            MovieGenre getMoviegenre = movieGenreService.findMovieGenreById(movieGenre.getId());
+            getMoviegenre.getMovies().remove(getMovie);
+            movieGenreService.updateMovieGenre(movieGenre.getId(), getMoviegenre);
+
+        });
         List<Review> reviews = reviewService.findReviewByMovie(AggregateReference.to(currentMovieId));
         reviews.forEach(review -> {
-            reviewService.deleteReview(review.getId());
+            try {
+                reviewService.deleteReview(review.getId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
         movieRepository.delete(getMovie);
     }
 
-    protected MovieDTO convertToMovieDTO(Movie movie) {
-        InformationDTO informationDTO = informationService.findAndGetInformationDTOById(movie.getInformation().getId());
-        MovieGenreDTO movieGenreDTO = movieGenreService.findAndGetMovieGenreDTOById(movie.getMovieGenre().getId());
-
-        return new MovieDTO(movie.getMovieLength(), informationDTO, movieGenreDTO);
+    public void addMovieGenreToMovie(Long currentMovieId, Long currentMovieGenreId) {
+        Movie getMovie = findMovieById(currentMovieId);
+        MovieGenre getMovieGenre = movieGenreService.findMovieGenreById(currentMovieGenreId);
+        if (getMovieGenre != null && !getMovie.getMovieGenres().contains(getMovieGenre)) {
+            getMovie.getMovieGenres().add(getMovieGenre);
+            updateMovie(currentMovieId, getMovie);
+        }
     }
 
-    private void setMovieGenreForMovie(Movie movie) {
-        MovieGenre getMovieGenre = movieGenreService.findMovieGenreById(movie.getMovieGenre().getId());
-        if (getMovieGenre != null) {
-            boolean isMovieGenreHasTheMovie = getMovieGenre.getMovies().contains(movie);
-            if (!isMovieGenreHasTheMovie) {
-                movieGenreService.addMovieToMovieGenre(movie.getMovieGenre().getId(), movie);
-            }
+    public void removeMovieGenreFromMovie(Long currentMovieId, Long currentMovieGenreId) {
+        Movie getMovie = findMovieById(currentMovieId);
+        MovieGenre getMovieGenre = movieGenreService.findMovieGenreById(currentMovieGenreId);
+        if (getMovieGenre != null && getMovie.getMovieGenres().contains(getMovieGenre)) {
+            getMovie.getMovieGenres().remove(getMovieGenre);
+            updateMovie(currentMovieId, getMovie);
         }
+    }
+
+    protected MovieDTO convertToMovieDTO(Movie movie) {
+        InformationDTO informationDTO = informationService.findAndGetInformationDTOById(movie.getInformation().getId());
+
+        return new MovieDTO(movie.getMovieLength(), informationDTO);
+    }
+
+    protected MoviesMovieGenresDTO convertToMoviesMovieGenresDTO(Movie movie) {
+        Set<MovieGenreDTO> movies = movie.getMovieGenres()
+                .stream()
+                .map(movieGenre -> movieGenreService.convertToMovieGenreDTO(movieGenre))
+                .collect(Collectors.toSet());
+        return new MoviesMovieGenresDTO(movies);
     }
 
     public Movie findMovieByInformation(AggregateReference<Information, Long> information) {
