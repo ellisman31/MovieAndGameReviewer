@@ -43,31 +43,37 @@ public class ReviewService {
         return getReview.map(this::convertToReviewDTO).orElse(null);
     }
 
-    public void saveReview(Long currentUserId, Review newReview) {
-        reviewRepository.save(newReview);
-        userService.addReview(currentUserId, newReview);
-    }
-
-    public void updateReview(Long currentReviewId, Review newReviewData) {
-        Review currentReview = findReviewById(currentReviewId);
-        Review updatedReview = userService.updateReview(currentReview.get_user().getId(),
-                currentReview, newReviewData);
-        reviewRepository.save(updatedReview);
-    }
-
-    public void deleteReview(Long currentReviewId) {
-        Review getReview = findReviewById(currentReviewId);
-        informationService.removeReviewFromInformation(informationService.findInformationByReview(getReview).getId(), getReview);
-        userService.removeReview(getReview.get_user().getId(), getReview);
-        reviewRepository.delete(getReview);
-    }
-
     public List<Review> findReviewByMovie(AggregateReference<Movie, Long> movie) {
         return reviewRepository.findByMovie(movie);
     }
 
     public List<Review> findReviewByGame(AggregateReference<Game, Long> game) {
         return reviewRepository.findByGame(game);
+    }
+
+    public void saveReview(Long currentUserId, Long currentMovieId, Long currentGameId, Review newReview) throws Exception {
+        if (currentMovieId > 0 && movieService.findMovieById(currentMovieId) != null) {
+            newReview.setMovie(AggregateReference.to(currentMovieId));
+        }
+        if (currentGameId > 0 && gameService.findGameById(currentGameId) != null) {
+            newReview.setGame(AggregateReference.to(currentGameId));
+        }
+        reviewRepository.save(newReview);
+        userService.addReview(currentUserId, newReview);
+    }
+
+    public void updateReview(Long currentReviewId, Review newReviewData) throws Exception {
+        Review currentReview = findReviewById(currentReviewId);
+        Review updatedReview = userService.updateReview(currentReview.get_user().getId(),
+                currentReview, newReviewData);
+        saveReview(currentReviewId, updatedReview.getMovie().getId(), updatedReview.getGame().getId(), updatedReview);
+    }
+
+    public void deleteReview(Long currentReviewId) throws Exception {
+        Review getReview = findReviewById(currentReviewId);
+        informationService.removeReviewFromInformation(informationService.findInformationByReview(getReview).getId(), getReview.getId());
+        userService.removeReview(getReview.get_user().getId(), getReview.getId());
+        reviewRepository.delete(getReview);
     }
 
     protected ReviewDTO convertToReviewDTO(Review review) {
