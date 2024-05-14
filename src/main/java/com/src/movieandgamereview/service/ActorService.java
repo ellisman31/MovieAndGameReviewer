@@ -57,8 +57,14 @@ public class ActorService {
         return getReview.map(this::convertActorGamesToDTO).orElse(null);
     }
 
-    public void saveActor(Actor newActor) {
-        actorRepository.save(newActor);
+    public void saveActor(Actor actor) {
+        actorRepository.save(actor);
+    }
+
+    public void saveNewActor(Long personId, Actor newActor) {
+        Person getPerson = personService.findPersonById(personId);
+        newActor.setPerson(AggregateReference.to(getPerson.getId()));
+        saveActor(newActor);
     }
 
     public void updateActor(Long currentActorId, Actor newActorData) {
@@ -66,31 +72,49 @@ public class ActorService {
         if (newActorData.getPerson() != null) {
             currentActor.setPerson(newActorData.getPerson());
         }
+        if (newActorData.getMovies() != null) {
+            currentActor.setMovies(newActorData.getMovies());
+        }
+        if (newActorData.getGames() != null) {
+            currentActor.setGames(newActorData.getGames());
+        }
         saveActor(currentActor);
     }
 
-    public void addActorToGame(Long currentActorId, Game game) {
+    public void addActorToGame(Long currentActorId, Long currentGameId) {
         Actor currentActor = findActorById(currentActorId);
-        currentActor.getGames().add(game);
-        saveActor(currentActor);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && !currentActor.getGames().contains(getGame)) {
+            currentActor.getGames().add(getGame);
+            updateActor(currentActorId, currentActor);
+        }
     }
 
-    public void removeActorFromGame(Long currentActorId, Game game) {
+    public void removeActorFromGame(Long currentActorId, Long currentGameId) {
         Actor currentActor = findActorById(currentActorId);
-        currentActor.getGames().remove(game);
-        saveActor(currentActor);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && currentActor.getGames().contains(getGame)) {
+            currentActor.getGames().remove(getGame);
+            updateActor(currentActorId, currentActor);
+        }
     }
 
-    public void addActorToMovie(Long currentActorId, Movie movie) {
+    public void addActorToMovie(Long currentActorId, Long currentMovieId) {
         Actor currentActor = findActorById(currentActorId);
-        currentActor.getMovies().add(movie);
-        saveActor(currentActor);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && !currentActor.getMovies().contains(getMovie)) {
+            currentActor.getMovies().add(getMovie);
+            updateActor(currentActorId, currentActor);
+        }
     }
 
-    public void removeActorFromMovie(Long currentActorId, Movie movie) {
+    public void removeActorFromMovie(Long currentActorId, Long currentMovieId) {
         Actor currentActor = findActorById(currentActorId);
-        currentActor.getMovies().remove(movie);
-        saveActor(currentActor);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && currentActor.getMovies().contains(getMovie)) {
+            currentActor.getMovies().remove(getMovie);
+            updateActor(currentActorId, currentActor);
+        }
     }
 
     public void deleteActor(Long currentActorId) {
@@ -100,7 +124,7 @@ public class ActorService {
             information.getActors().remove(getActor);
             informationService.updateInformation(information.getId(), information);
             movie.setInformation(AggregateReference.to(information.getId()));
-            movieService.saveMovie(movie);
+            movieService.updateMovie(movie.getId(), movie);
             personService.deletePerson(getActor.getPerson().getId());
         });
         actorRepository.delete(getActor);
