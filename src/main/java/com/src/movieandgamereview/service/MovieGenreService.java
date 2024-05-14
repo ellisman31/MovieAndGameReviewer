@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class MovieGenreService {
-
     @Autowired
     private MovieGenreRepository movieGenreRepository;
     @Autowired
@@ -50,27 +49,36 @@ public class MovieGenreService {
         if (newMovieGenreData.getName() != null) {
             currentMovieGenre.setName(newMovieGenreData.getName());
         }
+        if (newMovieGenreData.getMovies() != null) {
+            currentMovieGenre.setMovies(newMovieGenreData.getMovies());
+        }
         saveMovieGenre(currentMovieGenre);
     }
 
-    public void addMovieToMovieGenre(Long currentMovieGenreId, Movie movie) {
+    public void addMovieToMovieGenre(Long currentMovieGenreId, Long currentMovieId) {
         MovieGenre currentMovieGenre = findMovieGenreById(currentMovieGenreId);
-        currentMovieGenre.getMovies().add(movie);
-        saveMovieGenre(currentMovieGenre);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && !currentMovieGenre.getMovies().contains(getMovie)) {
+            currentMovieGenre.getMovies().add(getMovie);
+            updateMovieGenre(currentMovieGenre.getId(), currentMovieGenre);
+        }
     }
 
-    public void removeMovieFromMovieGenre(Long currentMovieGenreId, Movie movie) {
+    public void removeMovieFromMovieGenre(Long currentMovieGenreId, Long currentMovieId) {
         MovieGenre currentMovieGenre = findMovieGenreById(currentMovieGenreId);
-        currentMovieGenre.getMovies().remove(movie);
-        saveMovieGenre(currentMovieGenre);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && currentMovieGenre.getMovies().contains(getMovie)) {
+            currentMovieGenre.getMovies().remove(getMovie);
+            updateMovieGenre(currentMovieGenre.getId(), currentMovieGenre);
+        }
     }
 
     public void deleteMovieGenre(Long currentMovieGenreId) {
         MovieGenre currentMovieGenre = findMovieGenreById(currentMovieGenreId);
         currentMovieGenre.getMovies().forEach(movie -> {
-          Movie findMovie = movieService.findMovieById(movie.getId());
-          findMovie.setMovieGenre(null);
-          movieService.saveMovie(findMovie);
+          Movie getMovie = movieService.findMovieById(movie.getId());
+            getMovie.getMovieGenres().remove(currentMovieGenre);
+          movieService.updateMovie(movie.getId(), getMovie);
         });
         movieGenreRepository.delete(currentMovieGenre);
     }

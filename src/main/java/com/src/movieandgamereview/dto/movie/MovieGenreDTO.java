@@ -1,14 +1,15 @@
 package com.src.movieandgamereview.dto.movie;
 
+import com.src.movieandgamereview.group.MovieGenres;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 public class MovieGenreDTO {
-    private String name;
+    private MovieGenres name;
 
-    public MovieGenreDTO(String name) {
+    public MovieGenreDTO(MovieGenres name) {
         this.name = name;
     }
 }
