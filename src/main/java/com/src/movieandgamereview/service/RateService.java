@@ -5,6 +5,7 @@ import com.src.movieandgamereview.dto.movie.MovieDTO;
 import com.src.movieandgamereview.dto.rate.RateDTO;
 import com.src.movieandgamereview.dto.rate.RateGamesDTO;
 import com.src.movieandgamereview.dto.rate.RateMoviesDTO;
+import com.src.movieandgamereview.group.Rates;
 import com.src.movieandgamereview.model.game.Game;
 import com.src.movieandgamereview.model.Information;
 import com.src.movieandgamereview.model.movie.Movie;
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class RateService {
-
     @Autowired
     private RateRepository rateRepository;
     @Autowired
@@ -64,31 +64,49 @@ public class RateService {
         if (newRateData.getName() != null) {
             currentRate.setName(newRateData.getName());
         }
+        if (newRateData.getMovies() != null) {
+            currentRate.setMovies(newRateData.getMovies());
+        }
+        if (newRateData.getGames() != null) {
+            currentRate.setGames(newRateData.getGames());
+        }
         saveRate(currentRate);
     }
 
-    public void addRateToGame(Long currentRateId, Game game) {
+    public void addRateToGame(Long currentRateId, Long currentGameId) {
         Rate currentRate = findRateById(currentRateId);
-        currentRate.getGames().add(game);
-        saveRate(currentRate);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && !currentRate.getGames().contains(getGame)) {
+            currentRate.getGames().add(getGame);
+            updateRate(currentRateId, currentRate);
+        }
     }
 
-    public void removeRateFromGame(Long currentRateId, Game game) {
+    public void removeRateFromGame(Long currentRateId, Long currentGameId) {
         Rate currentRate = findRateById(currentRateId);
-        currentRate.getGames().remove(game);
-        saveRate(currentRate);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && currentRate.getGames().contains(getGame)) {
+            currentRate.getGames().remove(getGame);
+            updateRate(currentRateId, currentRate);
+        }
     }
 
-    public void addRateToMovie(Long currentRateId, Movie movie) {
+    public void addRateToMovie(Long currentRateId, Long currentMovieId) {
         Rate currentRate = findRateById(currentRateId);
-        currentRate.getMovies().add(movie);
-        saveRate(currentRate);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && !currentRate.getMovies().contains(getMovie)) {
+            currentRate.getMovies().add(getMovie);
+            updateRate(currentRateId, currentRate);
+        }
     }
 
-    public void removeRateFromMovie(Long currentRateId, Movie movie) {
+    public void removeRateFromMovie(Long currentRateId, Long currentMovieId) {
         Rate currentRate = findRateById(currentRateId);
-        currentRate.getMovies().remove(movie);
-        saveRate(currentRate);
+        Movie getMovie = movieService.findMovieById(currentMovieId);
+        if (getMovie != null && !currentRate.getMovies().contains(getMovie)) {
+            currentRate.getMovies().remove(getMovie);
+            updateRate(currentRateId, currentRate);
+        }
     }
 
     public void deleteRate(Long currentRateId) {
