@@ -49,25 +49,34 @@ public class GameGenreService {
         if (newGameGenreData.getName() != null) {
             currentGameGenre.setName(newGameGenreData.getName());
         }
+        if (newGameGenreData.getGames() != null) {
+            currentGameGenre.setGames(newGameGenreData.getGames());
+        }
         saveGameGenre(currentGameGenre);
     }
 
-    public void addGameToGameGenre(Long currentGameGenreId, Game game) {
+    public void addGameToGameGenre(Long currentGameGenreId, Long currentGameId) {
         GameGenre currentGameGenre = findGameGenreById(currentGameGenreId);
-        currentGameGenre.getGames().add(game);
-        saveGameGenre(currentGameGenre);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && !currentGameGenre.getGames().contains(getGame)) {
+            currentGameGenre.getGames().add(getGame);
+            updateGameGenre(currentGameGenreId, currentGameGenre);
+        }
     }
 
-    public void removeGameFromGameGenre(Long currentGameGenreId, Game game) {
+    public void removeGameFromGameGenre(Long currentGameGenreId, Long currentGameId) {
         GameGenre currentGameGenre = findGameGenreById(currentGameGenreId);
-        currentGameGenre.getGames().remove(game);
-        saveGameGenre(currentGameGenre);
+        Game getGame = gameService.findGameById(currentGameId);
+        if (getGame != null && currentGameGenre.getGames().contains(getGame)) {
+            currentGameGenre.getGames().remove(getGame);
+            updateGameGenre(currentGameGenreId, currentGameGenre);
+        }
     }
 
     public void deleteGameGenre(Long currentGameGenreId) {
         GameGenre getGameGenre = findGameGenreById(currentGameGenreId);
         getGameGenre.getGames().forEach(game -> {
-            game.setGameGenre(null);
+            game.getGameGenres().remove(getGameGenre);
             gameService.updateGame(game.getId(), game);
         });
         gameGenreRepository.delete(getGameGenre);
