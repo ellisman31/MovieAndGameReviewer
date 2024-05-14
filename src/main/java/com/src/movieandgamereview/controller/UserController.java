@@ -1,9 +1,10 @@
 package com.src.movieandgamereview.controller;
 
 import com.src.movieandgamereview.dto.user.UserDTO;
+import com.src.movieandgamereview.dto.user.UserReviewsDTO;
 import com.src.movieandgamereview.model.user.User;
 import com.src.movieandgamereview.service.UserService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@AllArgsConstructor
 public class UserController {
-
+    @Autowired
     private UserService userService;
 
     @GetMapping("/getAllUser")
@@ -22,28 +22,33 @@ public class UserController {
         return userService.getAllUser();
     }
 
-    @GetMapping("/findUserById/{id}")
+    @GetMapping("/findUserById/{userId}")
     @ResponseBody
-    public UserDTO getUserById(@PathVariable("id") Long userId) {
+    public UserDTO getUserById(@PathVariable("userId") Long userId) {
         return userService.findAndGetUserByIdDTO(userId);
     }
 
     @PostMapping("/addUser")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addUser(@RequestBody User newUser) {
+    public void addUser(@RequestBody User newUser) throws Exception {
         userService.saveUser(newUser);
     }
 
-    @PutMapping("/updateUser/{id}")
+    @PutMapping("/updateUser/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void updateUser(@PathVariable("id") Long userId, @RequestBody User newUserData) {
+    public void updateUser(@PathVariable("userId") Long userId, @RequestBody User newUserData) {
         userService.updateUser(userId, newUserData);
     }
 
-    @DeleteMapping("/deleteUser/{id}")
+    @DeleteMapping("/deleteUser/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteUser(@PathVariable("id") Long userId) {
+    public void deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
     }
 
+    @GetMapping("/getUserReviews/{userId}")
+    @ResponseBody
+    public UserReviewsDTO getUserReviews(@PathVariable("userId") Long userId) {
+        return userService.findAndGetUserReviewsByIdDTO(userId);
+    }
 }
