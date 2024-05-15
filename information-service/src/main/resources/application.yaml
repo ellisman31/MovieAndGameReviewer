@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: information-service
+  main:
+    allow-circular-references : true
+  config:
+    import: "optional:configserver:http://localhost:8088"
