@@ -4,3 +4,8 @@ server:
 spring:
   profiles:
     active: native
+  datasource:
+    url: jdbc:postgresql://${POSTGRESQL.URL}
+  username: ${POSTGRESQL.USERNAME}
+  password: ${POSTGRESQL.PASSWORD}
+  driver-class-name: org.postgresql.Driver
