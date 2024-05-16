@@ -1,16 +1,15 @@
-package com.movieandgamereview.userservice.dto;
+package com.movieandgamereview.informationservice.dto.user;
 
-//import com.src.movieandgamereview.dto.ReviewDTO;
+import com.movieandgamereview.informationservice.dto.ReviewDTO;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 public class UserReviewsDTO {
-    /*private Set<ReviewDTO> reviews;
+    private Set<ReviewDTO> reviews;
 
     public UserReviewsDTO(Set<ReviewDTO> reviews) {
         this.reviews = reviews;
     }
-     */
 }
