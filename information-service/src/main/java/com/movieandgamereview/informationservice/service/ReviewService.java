@@ -1,12 +1,15 @@
 package com.movieandgamereview.informationservice.service;
 
+import com.movieandgamereview.informationservice.client.UserClient;
 import com.movieandgamereview.informationservice.dto.ReviewDTO;
 import com.movieandgamereview.informationservice.dto.game.GameDTO;
 import com.movieandgamereview.informationservice.dto.movie.MovieDTO;
-//import com.movieandgamereview.informationservice.dto.user.UserDTO;
+import com.movieandgamereview.informationservice.dto.user.UserDTO;
+import com.movieandgamereview.informationservice.dto.user.UserReviewsDTO;
 import com.movieandgamereview.informationservice.model.Review;
 import com.movieandgamereview.informationservice.model.game.Game;
 import com.movieandgamereview.informationservice.model.movie.Movie;
+import com.movieandgamereview.informationservice.model.user.User;
 import com.movieandgamereview.informationservice.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
@@ -14,15 +17,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-//TODO: CONNECT WITH USER-SERVICE.
+//TODO: CREATE METHODS TO GET USERS REVIEWS.
+//TODO: CHECK ENUMS FOR GAMEGENRE, MOVIEGENRE, LANGUAGE AND RATE AT TEST FOR SAVE.
 @Service
 public class ReviewService {
     @Autowired(required=false)
     private ReviewRepository reviewRepository;
-    //@Autowired(required=false)
-    //private UserService userService;
+    @Autowired(required=false)
+    private UserClient userClient;
     @Autowired(required=false)
     private MovieService movieService;
     @Autowired(required=false)
@@ -52,6 +57,11 @@ public class ReviewService {
         return reviewRepository.findByGame(game);
     }
 
+    public UserReviewsDTO findAndGetUserReviewsByIdDTO(Long userId) {
+        User getUser = userClient.getUserById(userId);
+        return convertToUsersReviewsDTO(getUser);
+    }
+
     public void saveReview(Long currentUserId, Long currentMovieId, Long currentGameId, Review newReview) throws Exception {
         if (currentMovieId > 0 && movieService.findMovieById(currentMovieId) != null) {
             newReview.setMovie(AggregateReference.to(currentMovieId));
@@ -65,6 +75,10 @@ public class ReviewService {
 
     public void updateReview(Long currentReviewId, Review newReviewData) throws Exception {
         Review currentReview = findReviewById(currentReviewId);
+        if (newReviewData.getDescription() != null) {
+            currentReview.setDescription(newReviewData.getDescription());
+        }
+        saveReview(currentReview.get_user().getId(), currentReview.getMovie().getId(), currentReview.getGame().getId(), currentReview);
         //Review updatedReview = userService.updateReview(currentReview.get_user().getId(),
                 //currentReview, newReviewData);
         //saveReview(currentReviewId, updatedReview.getMovie().getId(), updatedReview.getGame().getId(), updatedReview);
@@ -78,11 +92,52 @@ public class ReviewService {
     }
 
     protected ReviewDTO convertToReviewDTO(Review review) {
-        //UserDTO reviewUser = userService.findAndGetUserByIdDTO(review.get_user().getId());
+        UserDTO reviewUser = userClient.getUserDTOById(review.get_user().getId());
         MovieDTO movieReview = movieService.findAndGetMovieDTOById(review.getMovie().getId());
         GameDTO gameReview = gameService.findAndGetGameDTOById(review.getGame().getId());
 
-        return null;//new ReviewDTO(review.getDescription(), reviewUser, movieReview, gameReview);
+        return new ReviewDTO(review.getDescription(), reviewUser, movieReview, gameReview);
     }
 
+    public UserReviewsDTO convertToUsersReviewsDTO(User user) {
+        Set<ReviewDTO> reviews = user.getReviews()
+                .stream()
+                .map(this::convertToReviewDTO)
+                .collect(Collectors.toSet());
+
+        return new UserReviewsDTO(reviews);
+    }
+
+    /*
+    public void addReview(Long currentUserId, Review newReview) throws Exception {
+        User currentUser = findUserById(currentUserId);
+        currentUser.getReviews().add(newReview);
+        updateUser(currentUserId, currentUser);
+    }
+    public Review updateReview(Long currentUserId, Review currentUserReview, Review newReviewData) throws Exception {
+        User currentUser = findUserById(currentUserId);
+        currentUser.getReviews().remove(currentUserReview);
+        if (newReviewData.getGame() != null) {
+            currentUserReview.setGame(newReviewData.getGame());
+        }
+        if (newReviewData.getMovie() != null) {
+            currentUserReview.setMovie(newReviewData.getMovie());
+        }
+        if (newReviewData.getDescription() != null) {
+            currentUserReview.setDescription(newReviewData.getDescription());
+        }
+
+        addReview(currentUserId, currentUserReview);
+        return currentUserReview;
+    }
+
+    public void removeReview(Long currentUserId, Long currentUserReviewId) throws Exception {
+        User currentUser = findUserById(currentUserId);
+        Review getReview = reviewService.findReviewById(currentUserReviewId);
+        if (currentUser.getReviews().contains(getReview)) {
+            currentUser.getReviews().remove(getReview);
+            updateUser(currentUserId, currentUser);
+        }
+    }
+     */
 }
