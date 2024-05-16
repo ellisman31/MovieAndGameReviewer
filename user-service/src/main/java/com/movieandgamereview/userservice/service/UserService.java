@@ -1,11 +1,8 @@
 package com.movieandgamereview.userservice.service;
 
-//import com.movieandgamereview.userservice.dto.ReviewDTO;
 import com.movieandgamereview.userservice.dto.UserDTO;
 import com.movieandgamereview.userservice.dto.UserGroupDTO;
-//import com.movieandgamereview.userservice.dto.UserReviewsDTO;
 import com.movieandgamereview.userservice.group.UserGroups;
-//import com.movieandgamereview.userservice.model.Review;
 import com.movieandgamereview.userservice.model.User;
 import com.movieandgamereview.userservice.model.UserGroup;
 import com.movieandgamereview.userservice.repository.UserRepository;
@@ -16,19 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-//import java.util.Set;
 import java.util.stream.Collectors;
 
-//TODO: CHECK ENUMS FOR GAMEGENRE, MOVIEGENRE, LANGUAGE AND RATE AT TEST FOR SAVE.
-//TODO: MICROSERVICES.
 @Service
 public class UserService {
     @Autowired(required=false)
     private UserRepository userRepository;
     @Autowired(required=false)
     private UserGroupService userGroupService;
-    //@Autowired
-    //private ReviewService reviewService;
 
     public List<UserDTO> getAllUser() {
         return ((List<User>) userRepository.findAll()).stream().map(this::convertToUserDTO).collect(Collectors.toList());
@@ -43,13 +35,6 @@ public class UserService {
         Optional<User> getUser = userRepository.findById(currentUserId);
         return getUser.map(this::convertToUserDTO).orElse(null);
     }
-
-    /*
-    public UserReviewsDTO findAndGetUserReviewsByIdDTO(Long userId) {
-        Optional<User> getUser = userRepository.findById(userId);
-        return getUser.map(this::convertUserReviewsToDTO).orElse(null);
-    }
-     */
 
     public void saveUser(User user) throws Exception {
         if (isEmailExist(user.getEmail()) != null) {
@@ -85,39 +70,6 @@ public class UserService {
         userRepository.save(currentUser);
     }
 
-    /*
-    public void addReview(Long currentUserId, Review newReview) throws Exception {
-        User currentUser = findUserById(currentUserId);
-        currentUser.getReviews().add(newReview);
-        updateUser(currentUserId, currentUser);
-    }
-    public Review updateReview(Long currentUserId, Review currentUserReview, Review newReviewData) throws Exception {
-        User currentUser = findUserById(currentUserId);
-        currentUser.getReviews().remove(currentUserReview);
-        if (newReviewData.getGame() != null) {
-            currentUserReview.setGame(newReviewData.getGame());
-        }
-        if (newReviewData.getMovie() != null) {
-            currentUserReview.setMovie(newReviewData.getMovie());
-        }
-        if (newReviewData.getDescription() != null) {
-            currentUserReview.setDescription(newReviewData.getDescription());
-        }
-
-        addReview(currentUserId, currentUserReview);
-        return currentUserReview;
-    }
-
-    public void removeReview(Long currentUserId, Long currentUserReviewId) throws Exception {
-        User currentUser = findUserById(currentUserId);
-        Review getReview = reviewService.findReviewById(currentUserReviewId);
-        if (currentUser.getReviews().contains(getReview)) {
-            currentUser.getReviews().remove(getReview);
-            updateUser(currentUserId, currentUser);
-        }
-    }
-     */
-
     public void deleteUser(Long currentUserId) {
         User currentUser = findUserById(currentUserId);
         /*currentUser.getReviews().forEach(review -> {
@@ -141,15 +93,6 @@ public class UserService {
 
         return userDTO;
     }
-
-    /*protected UserReviewsDTO convertUserReviewsToDTO(User user) {
-        Set<ReviewDTO> reviews = user.getReviews()
-                .stream()
-                .map(review -> reviewService.convertToReviewDTO(review))
-                .collect(Collectors.toSet());
-        return new UserReviewsDTO(reviews);
-    }
-     */
 
     protected User setToDefaultUserGroup(User user) {
         UserGroup defaultUserGroup = userGroupService.findUserGroupByName(UserGroups.MEMBER.name());

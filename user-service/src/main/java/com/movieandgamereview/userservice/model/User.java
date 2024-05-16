@@ -1,13 +1,10 @@
 package com.movieandgamereview.userservice.model;
 
-//import com.src.movieandgamereview.model.Review;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.jdbc.core.mapping.AggregateReference;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.Data;
 
 @Data
@@ -22,7 +19,6 @@ public class User {
     private LocalDate birthDate;
     private LocalDate registrationDate;
     private AggregateReference<UserGroup, Long> _userGroup;
-    //private Set<Review> reviews;
 
     public User(String firstName, String lastName, String email, String password, LocalDate birthDate, AggregateReference<UserGroup, Long> _userGroup) {
         this.firstName = firstName;
@@ -32,6 +28,5 @@ public class User {
         this.birthDate = birthDate;
         this.registrationDate = LocalDate.now();
         this._userGroup = _userGroup;
-        //this.reviews = new HashSet<>();
     }
 }

@@ -22,10 +22,16 @@ public class UserController {
         return userService.getAllUser();
     }
 
+    @GetMapping("/findUserDTOById/{userId}")
+    @ResponseBody
+    public UserDTO getUserDTOById(@PathVariable("userId") Long userId) {
+        return userService.findAndGetUserByIdDTO(userId);
+    }
+
     @GetMapping("/findUserById/{userId}")
     @ResponseBody
-    public UserDTO getUserById(@PathVariable("userId") Long userId) {
-        return userService.findAndGetUserByIdDTO(userId);
+    public User getUserById(@PathVariable("userId") Long userId) {
+        return userService.findUserById(userId);
     }
 
     @PostMapping("/addUser")
@@ -46,6 +52,7 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
+    //TODO: STORE REVIEW IDS AND RECEIVE IT.
     /*@GetMapping("/getUserReviews/{userId}")
     @ResponseBody
     public UserReviewsDTO getUserReviews(@PathVariable("userId") Long userId) {
